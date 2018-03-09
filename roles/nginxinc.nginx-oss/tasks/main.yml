@@ -1,0 +1,16 @@
+---
+# tasks file for ansible-nginx-oss
+- include: pkg-debian.yml
+  when: ansible_os_family == "Debian"
+
+- include: pkg-redhat.yml
+  when: ansible_os_family == "RedHat"
+
+- include: pkg-suse.yml
+  when: ansible_os_family == "Suse"
+
+- name: "(All OS) Install NGINX OSS"
+  package:
+    name: nginx
+    state: latest
+  notify: "(All OS) Start NGINX"

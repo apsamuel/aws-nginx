@@ -1,0 +1,11 @@
+---
+- name: "(Debian/Ubuntu) Add NGINX Signing Key"
+  apt_key:
+    url: http://nginx.org/keys/nginx_signing.key
+
+- name: "(Debian/Ubuntu) Add NGINX Repository"
+  apt_repository:
+    repo: "{{item}}"
+  with_items:
+    - deb http://nginx.org/packages/mainline/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx
+    - deb-src http://nginx.org/packages/mainline/{{ansible_distribution|lower}}/ {{ansible_distribution_release}} nginx

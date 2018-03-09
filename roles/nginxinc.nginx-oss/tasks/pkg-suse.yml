@@ -1,0 +1,6 @@
+---
+- name: "(SUSE/SLES) Add NGINX Repository"
+  zypper_repository:
+    name: nginx
+    repo: http://nginx.org/packages/mainline/sles/12
+    disable_gpg_check: yes
