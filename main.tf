@@ -1,7 +1,23 @@
+#configure provider - make sure to set your AWS_DEFAULT_REGION, AWS_ACCESS_KEY_ID & AWS_SECRET_ACCESS_KEY accordingly.
 provider "aws" {
   region = "us-east-1"
 }
 
+#grab networking information
+data "aws_vpc" "default" {
+  default = true
+}
+
+data "aws_subnet" "net" {
+  vpc_id = "${data.aws_vpc.default.id}"
+
+  filter {
+    name   = "availability-zone"
+    values = ["us-east-1a"]
+  }
+}
+
+#locate AMI - make sure you have an AMI named nginx-simple-web in your inventory
 data "aws_ami" "nginx" {
   most_recent = true
 
@@ -26,6 +42,7 @@ data "aws_ami" "nginx" {
   }
 }
 
+#generate TLS/AWS::KeyPair
 resource "tls_private_key" "nginx" {
   algorithm = "RSA"
 }
@@ -54,6 +71,7 @@ resource "aws_key_pair" "nginx" {
   public_key = "${tls_private_key.nginx.public_key_openssh}"
 }
 
+#configure instance profile
 resource "aws_iam_instance_profile" "profile" {
   name = "nginx-companion-website"
   role = "${aws_iam_role.role.name}"
@@ -80,9 +98,11 @@ resource "aws_iam_role" "role" {
 EOF
 }
 
+#configure security
 resource "aws_security_group" "instance" {
   name        = "${aws_iam_instance_profile.profile.name}-sg"
   description = "Nginx Server Security Group"
+  vpc_id      = "${data.aws_vpc.default.id}"
 
   ingress {
     from_port   = 0
@@ -106,13 +126,15 @@ resource "aws_security_group" "instance" {
   }
 }
 
+#configure instance
 resource "aws_instance" "instance" {
-  ami                         = "${data.aws_ami.nginx.id}"
-  instance_type               = "t2.micro"
-  associate_public_ip_address = true
+  subnet_id                   = "${data.aws_subnet.net.id}"
   security_groups             = ["${aws_security_group.instance.id}"]
+  ami                         = "${data.aws_ami.nginx.id}"
   key_name                    = "${aws_key_pair.nginx.name}"
   iam_instance_profile        = "${aws_iam_instance_profile.profile.name}"
+  instance_type               = "${var.instance_type}"
+  associate_public_ip_address = "${var.associate_public_ip_address ? true : false}"
 
   tags {
     Name    = "nginx-companion-website"
