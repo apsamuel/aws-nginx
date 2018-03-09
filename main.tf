@@ -135,6 +135,7 @@ resource "aws_instance" "instance" {
   iam_instance_profile        = "${aws_iam_instance_profile.profile.name}"
   instance_type               = "${var.instance_type}"
   associate_public_ip_address = "${var.associate_public_ip_address ? true : false}"
+  ebs_optimized               = "${var.ebs_optimized ? true : false}"
 
   tags {
     Name    = "nginx-companion-website"
