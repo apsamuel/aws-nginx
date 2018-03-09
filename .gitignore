@@ -1,2 +1,6 @@
 output
+.terraform
+*plan
+*backup
+*state
 
