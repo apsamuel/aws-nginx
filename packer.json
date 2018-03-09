@@ -1,0 +1,52 @@
+{
+  "variables": {
+    "vault_secret": "{{ env `vault_secret`}}"
+  },
+  "builders": [{
+    "type": "amazon-ebs",
+    "region": "us-east-1",
+    "source_ami_filter": {
+      "filters": {
+      "virtualization-type": "hvm",
+      "name": "ubuntu/images/*ubuntu-xenial-16.04-amd64-server-*",
+      "root-device-type": "ebs"
+      },
+      "most_recent": true
+    },
+    "instance_type": "m3.medium",
+    "ssh_username": "ubuntu",
+    "ami_name": "nginx-simple-web {{timestamp}}"
+  }],
+  "provisioners": [
+    {
+      "type": "shell",
+      "inline": [
+        "touch /tmp/vault",
+        "echo {{ user `vault_secret` }} > /tmp/vault"
+      ]
+    },
+    {
+      "type": "shell",
+      "script": "roles/_helpers/upgrade"
+    },
+    {
+      "type": "shell",
+      "script": "roles/_helpers/tools"
+    },
+    {
+      "type": "ansible-local",
+      "clean_staging_directory": true,
+      "playbook_dir": ".",
+      "playbook_file": "./roles/site.yml",
+      "extra_arguments": [
+        "--extra-vars 'packer_build=amazon-ebs packer_build_type=amazon-ebs packer_http_addr=none'",
+        "--extra-vars @./roles/vars.yml",
+        "--extra-vars @./roles/secrets.yml",
+        "--vault-password-file=/tmp/vault"
+      ],
+      "role_paths": [
+        "./roles/nginxinc.nginx-oss"
+      ]
+    }
+  ]
+}
