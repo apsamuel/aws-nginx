@@ -20,3 +20,12 @@ variable "region" {
   type    = "string"
   default = "us-east-1"
 }
+
+variable "enable_dns" {
+  default = true
+}
+
+variable "domain" {
+  type    = "string"
+  default = "darkphotonworks-labs.io."
+}

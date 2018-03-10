@@ -1,0 +1,48 @@
+---
+- name: Create nginx subdir structure
+  file:
+    path: /etc/nginx/{{item}}
+    mode: 0755
+    owner: nginx
+    group: nginx
+    state: directory
+    recurse: yes
+  with_items:
+    - sites-available
+    - sites-enabled
+
+- name: Create web root structure
+  file:
+    path: "{{ toolbox_dir }}"
+    mode: 0755
+    owner: nginx
+    group: nginx
+    state: directory
+    recurse: yes
+
+- name: Create nginx main configuration
+  template:
+    src: nginx.conf.j2
+    dest: /etc/nginx/nginx.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+  notify:
+    - restart_nginx
+
+- name: Create toolbox website configuration
+  template:
+    src: toolbox.conf.j2
+    dest: /etc/nginx/sites-available/toolbox.conf
+    owner: root
+    group: root
+    mode: "u=rw,g=r,o=r"
+
+- name: Enable toolbox website configuration
+  file:
+    src: /etc/nginx/sites-available/toolbox.conf
+    dest: /etc/nginx/sites-enabled/toolbox.conf
+    state: link
+  when: toolbox_enabled
+  notify:
+    - restart_nginx
