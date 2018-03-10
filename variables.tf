@@ -11,6 +11,11 @@ variable "ebs_optimized" {
   default = false
 }
 
+variable "vpc" {
+  type    = "string"
+  default = "vpc-a42399c1"
+}
+
 variable "region" {
   type    = "string"
   default = "us-east-1"
