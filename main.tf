@@ -143,3 +143,17 @@ resource "aws_instance" "instance" {
     Contact = "aaron.psamuel@gmail.com"
   }
 }
+
+#- configure dns  
+data "aws_route53_zone" "dns" {
+  name = "${var.domain}"
+}
+
+resource "aws_route53_record" "cname" {
+  count   = "${var.enable_dns ? 1 : 0 }"
+  zone_id = "${data.aws_route53_zone.dns.zone_id}"
+  name    = "toolbox.${data.aws_route53_zone.dns.name}"
+  type    = "A"
+  ttl     = "5"
+  records = ["${aws_instance.instance.public_ip}"]
+}
