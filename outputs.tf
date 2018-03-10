@@ -14,8 +14,10 @@ output "public_ip_url" {
   value = "http://${aws_instance.instance.public_ip}"
 }
 
+#Warning: output "public_dns_url": must use splat syntax to access aws_route53_record.cname attribute "fqdn",
+#because it has "count" set; use aws_route53_record.cname.*.fqdn to obtain a list of the attributes across all instances
 output "public_dns_url" {
-  value = "http://${aws_route53_record.dns.fqdn}"
+  value = "http://${aws_route53_record.cname.*.fqdn}"
 }
 
 output "access_key_name" {
