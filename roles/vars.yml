@@ -1,1 +1,3 @@
-nothing: here
+toolbox_dir: /var/www/toolbox/html
+toolbox_fqdn: toolbox.darkphotonworks-labs.io
+toolbox_enabled: true 
