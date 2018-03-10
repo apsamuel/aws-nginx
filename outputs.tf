@@ -10,8 +10,12 @@ output "private_ip" {
   value = "${ aws_instance.instance.private_ip}"
 }
 
-output "public_url" {
-  value = "http://${aws_instance.instance.public_dns}"
+output "public_ip_url" {
+  value = "http://${aws_instance.instance.public_ip}"
+}
+
+output "public_dns_url" {
+  value = "http://${aws_route53_record.dns.fqdn}"
 }
 
 output "access_key_name" {
