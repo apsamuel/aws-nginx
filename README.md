@@ -15,6 +15,8 @@
 * Download & Copy to system path.
   * https://www.packer.io/downloads.html
 
+  [e85713fb]: https://www.packer.io/downloads.html "Packer Setup"
+
 ### Install ansible
 
 * Use your OS installation guide.
@@ -39,13 +41,15 @@
 
 **REPOROOT/variables.tf**
 
-variable name                    | variable type  | default value
----------------------------------|----------------|--------------
-  vpc                            |  string        | vpc-a42399c1
-  region                         |  string        | us-east-1
-  instance_type                  |  string        | t2.medium
-  associate_public_ip_address    |  boolean       | true
-  ebs_optimized                  |  boolean       | false
+variable name                    | variable type  | default value                     |  description
+---------------------------------|----------------|-----------------------------------|--------------------------------------------------------
+  vpc                            |  string        | vpc-a42399c1                      | AWS VPC ID
+  region                         |  string        | us-east-1                         | AWS Region Name
+  instance_type                  |  string        | t2.medium                         | AWS Instance Size
+  associate_public_ip_address    |  boolean       | true                              | Associate AWS Elasic IP
+  ebs_optimized                  |  boolean       | false                             | Enable Optimized Disk
+  enable_dns                     |  boolean       | true                              | Enable DNS Configuration
+  domain                         |  string        | darkphotonworks-labs.io.          | Domain Name (AWS hosted)
 
 
 ### Build AWS::AMI
