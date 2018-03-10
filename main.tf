@@ -5,7 +5,7 @@ provider "aws" {
 
 #grab networking information
 data "aws_vpc" "default" {
-  default = true
+  id = "${var.vpc}"
 }
 
 data "aws_subnet" "net" {
@@ -131,7 +131,7 @@ resource "aws_instance" "instance" {
   subnet_id                   = "${data.aws_subnet.net.id}"
   security_groups             = ["${aws_security_group.instance.id}"]
   ami                         = "${data.aws_ami.nginx.id}"
-  key_name                    = "${aws_key_pair.nginx.name}"
+  key_name                    = "${aws_key_pair.nginx.key_name}"
   iam_instance_profile        = "${aws_iam_instance_profile.profile.name}"
   instance_type               = "${var.instance_type}"
   associate_public_ip_address = "${var.associate_public_ip_address ? true : false}"
